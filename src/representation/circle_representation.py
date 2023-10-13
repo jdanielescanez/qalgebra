@@ -65,13 +65,13 @@ class CircleNotation:
         ax.add_patch(circle_base)
         
         # Draw the tag below the circle
-        ax.text(origin[0] + 0.1 * self.SCALE, origin[1] - 1.6 * self.SCALE, r'$|' + tag + r'\rangle$', \
+        ax.text(origin[0] + 0.1 * self.SCALE, origin[1] - 1.6 * self.SCALE, f"$|{tag}\\rangle$", \
                 color="black", fontsize=30, horizontalalignment='center')
     
     # Prints the statevector using the Circle Notation
     def paint(self):
         # Uses as many circles as there are elements in the state vector
-        fig, ax_v = plt.subplots(ncols=len(self.statevector))
+        _, ax_v = plt.subplots(ncols=len(self.statevector))
         # Calculates the tag format depending of the statevector size
         tag_format = '0' + str(int(log(len(self.statevector), 2))) + 'b'
             
