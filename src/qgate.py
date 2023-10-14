@@ -9,7 +9,7 @@ class QGate:
     self.controls = controls
 
   def __str__(self) -> str:
-    controls_string = ('^{' + str(self.controls)[1:-1] + '}') if self.controls != [] else ''
+    controls_string = ('^{' + str(self.controls)[1:-1] + '}') if len(self.controls) > 0 else ''
     return self.get_name() + '_{' + str(self.targets)[1:-1] + '}' + controls_string
 
   @classmethod
@@ -18,17 +18,20 @@ class QGate:
 
   def apply(self, qstate: QState):
     new_qstate = copy.copy(qstate)
-    new_qstate.all_zero()
-    for i, coefficient in enumerate(qstate.state):
-      if coefficient != 0:
-        for j in self.targets:
-          if all([qstate.reversed_tags[i][x] == '1' for x in self.controls]):
-            if qstate.reversed_tags[i][j] == '0':
-              new_qstate.state[i] += self.matrix[0][0] * qstate.state[i]
-              new_qstate.state[i + 2 ** j] += self.matrix[0][1] * qstate.state[i]
+
+    for j in self.targets:
+      current_qstate = copy.copy(new_qstate)
+      current_qstate.all_zero()
+      for i, coefficient in enumerate(new_qstate.state):
+        if coefficient != 0:
+          if all([new_qstate.reversed_tags[i][x] == '1' for x in self.controls]):
+            if new_qstate.reversed_tags[i][j] == '0':
+              current_qstate.state[i] += self.matrix[0][0] * coefficient
+              current_qstate.state[i + 2 ** j] += self.matrix[0][1] * coefficient
             else:
-              new_qstate.state[i - 2 ** j] += self.matrix[1][0] * qstate.state[i]
-              new_qstate.state[i] += self.matrix[1][1] * qstate.state[i]
+              current_qstate.state[i - 2 ** j] += self.matrix[1][0] * coefficient
+              current_qstate.state[i] += self.matrix[1][1] * coefficient
           else:
-            new_qstate.state[i] = qstate.state[i]
+            current_qstate.state[i] += coefficient
+      new_qstate = copy.copy(current_qstate)
     return new_qstate
