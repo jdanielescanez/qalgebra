@@ -6,6 +6,7 @@ class QCircuit:
 
     self.operations = operations[::-1]
     self.size = size
+    self.horizontal_wires_zone = []
     self.matrix = self.__get_matrix()
 
   def __get_matrix(self):
@@ -26,6 +27,9 @@ class QCircuit:
         while len(matrix[control]) - 1 < max_qubit:
           matrix[control].append(self.WIRE)
         matrix[control][max_qubit] = self.CONTROL
+      
+      horizontal_wires_zone = list(range(min(indexes), max(indexes))) if len(op.controls) > 0 else []
+      self.horizontal_wires_zone.append(horizontal_wires_zone)
 
     return matrix
 
@@ -35,10 +39,15 @@ class QCircuit:
 
     for i, qubit in enumerate(self.matrix):
       qubit_string = 'q[' + str(i) + '] ' + self.WIRE
-      for cell in qubit:
+      next_horizontals_string = ' ' * len(qubit_string)
+      for j, cell in enumerate(qubit):
         qubit_string += self.WIRE + cell + self.WIRE
+        horizontal_wire = '|' if i in self.horizontal_wires_zone[j] else ' '
+        next_horizontals_string += ' ' + horizontal_wire + ' '
 
       padding = 3 * (max_size - len(qubit)) * self.WIRE
-      qc_string += qubit_string + padding + '\n'
+      next_horizontals_string += padding + '\n'
 
-    return qc_string
+      qc_string += qubit_string + padding + '\n' + next_horizontals_string
+
+    return qc_string[:-(len(next_horizontals_string) + 1)]

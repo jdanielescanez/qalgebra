@@ -7,6 +7,10 @@ class QGate:
     self.matrix = matrix
     self.targets = targets
     self.controls = controls
+    
+    # TODO: Add symbol
+    # chr(127215 + ord('A')) = chr(127280) = 🄰
+    # self.symbol = chr(127215 + ord(self.get_name()))
 
   def __str__(self) -> str:
     controls_string = ('^{' + str(self.controls)[1:-1] + '}') if len(self.controls) > 0 else ''

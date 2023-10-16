@@ -8,3 +8,8 @@ class Execution:
   
   def step(self):
     self.qstate = self.operations.pop().apply(self.qstate)
+
+  def run(self):
+    while len(self.operations) > 0:
+      self.step()
+    return self.qstate
