@@ -8,6 +8,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 plt.rcParams['text.usetex'] = True
+mpl.rcParams.update(mpl.rcParamsDefault)
 
 # See: https://stackoverflow.com/questions/44970010/
 #          axes-class-set-explicitly-size-width-height-of-axes-in-given-units
@@ -81,6 +82,7 @@ class CircleNotation:
             self.draw_circle_in_ax(radius, phase, format(index, tag_format), ax_v[index])
 
         # Prints all drawn circles
+        # plt.savefig('output/circle_notation.png')
         plt.show()
 
 # Prints the statevector using the Circle Notation
