@@ -1,5 +1,5 @@
 
-from src.qstate import QState
+from src.entities.qstate import QState
 import copy
 
 class QGate:
@@ -12,15 +12,39 @@ class QGate:
     # chr(127215 + ord('A')) = chr(127280) = 🄰
     # self.symbol = chr(127215 + ord(self.get_name()))
 
+  def format_indexes(self, indexes) -> str:
+    string = ''
+    i = 0
+    j = i
+    while i < len(indexes):
+      while j + 1 < len(indexes) and indexes[j] + 1 == indexes[j + 1]:
+        j += 1
+      if i + 1 == j:
+        string += f'{indexes[i]},{indexes[j]},'
+        i = j
+      elif i != j:
+        string += f'{indexes[i]}-{indexes[j]},'
+        i = j
+      else:
+        string += f'{indexes[i]},'
+      i += 1
+      j = i
+    return string[:-1]
+
   def __str__(self) -> str:
-    controls_string = ('^{' + str(self.controls)[1:-1] + '}') if len(self.controls) > 0 else ''
-    return self.get_name() + '_{' + str(self.targets)[1:-1] + '}' + controls_string
+    formated_targets = self.format_indexes(self.targets)
+    if len(self.controls) > 0:
+      formated_controls = self.format_indexes(self.controls)
+      controls_string = '^{' + formated_controls + '}'
+    else:
+      controls_string = ''
+    return self.get_name() + '_{' + formated_targets + '}' + controls_string
 
   @classmethod
   def get_name(cls):
     return cls.__name__
 
-  def apply(self, qstate: QState):
+  def apply(self, qstate: QState) -> QState:
     new_qstate = copy.copy(qstate)
 
     for j in self.targets:

@@ -1,18 +1,20 @@
 
 import re
 
-from src.qgates import gates
+from src.entities.qgates import gates
 
 class Parser:
   def __init__(self):
     self.operations = []
-    self.qstate = None
 
   def run(self, text: str) -> list:
+    # TODO: Add compatibility: comma and en dash notation, ranges :
+    # new regex: (?P<gate_name>[A-Z]+)(?:(?:\_\{(?P<targets>\d+(?::\d+)?(?:,\d+(?::\d+)?)*)\})|(?:\^\{(?P<controls>\d+(?::\d+)?(?:,\d+(?::\d+)?)*)\}))+
     regex = r'(?P<gate_name>[A-Z]+)(?:(?:\_\{(?P<targets>\d+(?:,\d+)*|\d+-\d+)\})|(?:\^\{(?P<controls>\d+(?:,\d+)*|\d+-\d+)\}))+'
     results = re.findall(regex, text)
     split_string_by_char = lambda string, char: list(map(int, string.split(char)))
 
+    self.operations = []
     for gate_name, targets, controls in results:
       if '-' in targets:
         first_target, last_target = split_string_by_char(targets, '-')

@@ -1,18 +1,16 @@
 
+import os  
 
+from src.entities.execution import Execution
+from src.entities.qstate import QState
+from pdflatex import PDFLaTeX
 
 class Writer:
-  def __init__(self, execution_engine):
-    self.execution_engine = execution_engine
-
-  def run(self, filename: str='./examples/output/out.tex'):
-    f = open(filename, 'w')
-
+  def get_latex(self, operations, size):
     text = """
     \\documentclass{article}
 
     \\usepackage{amsmath}
-    \\usepackage{autobreak}
 
     \\title{Example}
     \\author{Daniel Escanez-Exposito}
@@ -23,24 +21,42 @@ class Writer:
     \\maketitle
 
     \\section{Exercise}
-    \\begin{autobreak}
+    $
     """
 
-    text += self.format_operations()
+    text += self.format_operations(operations, size)
     
     text += """
-    \\end{autobreak}
+    $
     \\end{document}
     """
 
+    return text
+
+  def run(self, operations, size, filename: str='out'):
+    tex_path = f'./examples/output/{filename}.tex'
+    pdf_path = f'./examples/output/{filename}.pdf'
+
+    f = open(tex_path, 'w')
+    text = self.get_latex(operations, size)
     f.write(text)
     f.close()
 
-  def format_operations(self):
-    text = ''.join([str(op) for op in self.execution_engine.operations])
-    text += self.execution_engine.qstate.to_latex() + '\\\\ \\\\ \n'
-    while len(self.execution_engine.operations) > 0:
-      self.execution_engine.step()
-      text += '=' + ''.join([str(op) for op in self.execution_engine.operations])
-      text += '[' + self.execution_engine.qstate.to_latex() + ']\\\\ \\\\ \n'
+    pdfl = PDFLaTeX.from_texfile(tex_path)
+    pdfl.create_pdf(keep_pdf_file=True, keep_log_file=False)
+    os.system(f'mv {pdf_path.split("/")[-1]} {pdf_path}')
+
+  def get_operations_string(self, operations):
+    return ''.join([str(op) for op in operations])
+  
+  def format_operations(self, operations, size):
+    execution_engine = Execution()
+    qstate = QState(size)
+    
+    text = self.get_operations_string(operations)
+    text += qstate.to_latex() + '\\\\ \\\\ \n'
+    while len(operations) > 0:
+      qstate = execution_engine.step(qstate, operations)
+      text += '=' + self.get_operations_string(operations)
+      text += '[' + qstate.to_latex() + ']\\\\ \\\\ \n'
     return text[:-4]

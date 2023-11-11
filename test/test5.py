@@ -6,11 +6,11 @@ sys.path.append('.')
 from src.representation.circle_representation import paint_circle_notation
 
 from src.io.parser import Parser
-from src.qcircuit import QCircuit
-from src.execution import Execution
+from src.entities.execution import Execution
+from src.entities.qstate import QState
 
-parsed_instructions = Parser().run('H_{0-3}X_{1-3}Z_{1}^{2-3}X_{1-3}H_{1-3}X_{0}^{1-2}X_{0}^{1,3}H_{0-3}X_{0}')
-execution = Execution(parsed_instructions, 4)
-qstate = execution.run()
+parsed_instructions = Parser().run('H_{0-1}X_{1}')
+execution = Execution()
+qstate = execution.run(QState(2), parsed_instructions)
 paint_circle_notation(qstate.state)
 print(qstate)

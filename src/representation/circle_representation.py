@@ -77,9 +77,10 @@ class CircleNotation:
         tag_format = '0' + str(int(log(len(self.statevector), 2))) + 'b'
             
         # For each state in statevector, draw its circle computing its radius and phase
+        _, zero_phase = cmath.polar(self.statevector[0])
         for index, state in enumerate(self.statevector):
             radius, phase = cmath.polar(state)
-            self.draw_circle_in_ax(radius, phase, format(index, tag_format), ax_v[index])
+            self.draw_circle_in_ax(radius, phase - zero_phase, format(index, tag_format), ax_v[index])
 
         # Prints all drawn circles
         # plt.savefig('output/circle_notation.png')

@@ -5,13 +5,17 @@ from sympy.printing.latex import latex
 class QState:
   def __init__(self, size: int) -> None:
     self.size = size
-    self.all_zero()
-    self.state[0] = complex(1)
+    self.state = None
+    self.reset()
     self.tags = list(map(lambda i: '{0:b}'.format(i).zfill(self.size), list(range(2 ** self.size))))
     self.reversed_tags = list(map(lambda x: x[::-1], self.tags))
 
   def all_zero(self) -> None:
     self.state = [complex(0)] * 2 ** self.size
+
+  def reset(self):
+    self.all_zero()
+    self.state[0] = complex(1)
     
   def __format_sqrt_i(self, coefficient):
     return str(coefficient).replace('sqrt', '√').replace('*I', 'ⅈ')
@@ -37,4 +41,5 @@ class QState:
         formated_coefficient = latex(coefficient) if coefficient != 1 else ''
         sign = '+' if coefficient != 1 and not formated_coefficient[0] in ['+', '-'] else ''
         latex_str += sign + formated_coefficient + ' |' + self.tags[i] + '\\rangle '
-    return latex_str[1:]
+    latex_str = latex_str[1:] if latex_str[0] == '+' else latex_str
+    return latex_str

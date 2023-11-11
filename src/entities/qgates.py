@@ -1,5 +1,5 @@
 
-from src.qgate import QGate
+from src.entities.qgate import QGate
 from sympy import sqrt
 
 class I(QGate):
