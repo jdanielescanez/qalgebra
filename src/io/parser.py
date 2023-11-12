@@ -4,15 +4,19 @@ import re
 from src.entities.qgates import gates
 
 class Parser:
-  def __init__(self):
+  def __init__(self, size):
     self.operations = []
+    self.size = size
+
+  def index_map(self, index_str):
+    return self.size - int(index_str)
 
   def run(self, text: str) -> list:
     # TODO: Add compatibility: comma and en dash notation, ranges :
     # new regex: (?P<gate_name>[A-Z]+)(?:(?:\_\{(?P<targets>\d+(?::\d+)?(?:,\d+(?::\d+)?)*)\})|(?:\^\{(?P<controls>\d+(?::\d+)?(?:,\d+(?::\d+)?)*)\}))+
     regex = r'(?P<gate_name>[A-Z]+)(?:(?:\_\{(?P<targets>\d+(?:,\d+)*|\d+-\d+)\})|(?:\^\{(?P<controls>\d+(?:,\d+)*|\d+-\d+)\}))+'
     results = re.findall(regex, text)
-    split_string_by_char = lambda string, char: list(map(int, string.split(char)))
+    split_string_by_char = lambda string, char: list(map(self.index_map, string.split(char)))
 
     self.operations = []
     for gate_name, targets, controls in results:
@@ -20,6 +24,7 @@ class Parser:
         first_target, last_target = split_string_by_char(targets, '-')
         targets = list(range(first_target, last_target + 1))
       else:
+        print(targets)
         targets = split_string_by_char(targets, ',')
 
       if len(controls) > 0:

@@ -7,7 +7,7 @@ class Execution:
     self.qstate = None
   
   def step(self, qstate, operations):
-    return operations.pop().apply(qstate)
+    return operations.pop(0).apply(qstate)
 
   def run(self, qstate, operations):
     self.qstate = copy(qstate)

@@ -1,5 +1,6 @@
 
 import os  
+from copy import copy
 
 from src.entities.execution import Execution
 from src.entities.qstate import QState
@@ -7,6 +8,7 @@ from pdflatex import PDFLaTeX
 
 class Writer:
   def get_latex(self, operations, size):
+    operations_copy = copy(operations)
     text = """
     \\documentclass{article}
 
@@ -24,7 +26,7 @@ class Writer:
     $
     """
 
-    text += self.format_operations(operations, size)
+    text += self.format_operations(operations_copy, size)
     
     text += """
     $
@@ -46,17 +48,17 @@ class Writer:
     pdfl.create_pdf(keep_pdf_file=True, keep_log_file=False)
     os.system(f'mv {pdf_path.split("/")[-1]} {pdf_path}')
 
-  def get_operations_string(self, operations):
-    return ''.join([str(op) for op in operations])
+  def get_operations_string(self, operations, size):
+    return ''.join([op.get_formatted_string(size) for op in operations])
   
   def format_operations(self, operations, size):
     execution_engine = Execution()
     qstate = QState(size)
     
-    text = self.get_operations_string(operations)
-    text += qstate.to_latex() + '\\\\ \\\\ \n'
+    text = qstate.to_latex()
+    text += self.get_operations_string(operations, size) + '\\\\ \\\\ \n'
     while len(operations) > 0:
       qstate = execution_engine.step(qstate, operations)
-      text += '=' + self.get_operations_string(operations)
-      text += '[' + qstate.to_latex() + ']\\\\ \\\\ \n'
+      text += '= [' + qstate.to_latex() + ']'
+      text += self.get_operations_string(operations, size) + '\\\\ \\\\ \n'
     return text[:-4]

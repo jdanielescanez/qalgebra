@@ -12,7 +12,8 @@ class QGate:
     # chr(127215 + ord('A')) = chr(127280) = 🄰
     # self.symbol = chr(127215 + ord(self.get_name()))
 
-  def format_indexes(self, indexes) -> str:
+  def format_indexes(self, indexes, size) -> str:
+    indexes = [size - index for index in map(int, indexes)]
     string = ''
     i = 0
     j = i
@@ -31,10 +32,10 @@ class QGate:
       j = i
     return string[:-1]
 
-  def __str__(self) -> str:
-    formated_targets = self.format_indexes(self.targets)
+  def get_formatted_string(self, size) -> str:
+    formated_targets = self.format_indexes(self.targets, size)
     if len(self.controls) > 0:
-      formated_controls = self.format_indexes(self.controls)
+      formated_controls = self.format_indexes(self.controls, size)
       controls_string = '^{' + formated_controls + '}'
     else:
       controls_string = ''

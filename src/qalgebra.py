@@ -11,7 +11,7 @@ class QAlgebra:
     self.qstate = None
     self.operations = []
 
-    self.parser = Parser()
+    self.parser = Parser(0)
     self.writer = Writer()
     self.execution = Execution()
 
@@ -71,6 +71,7 @@ class QAlgebra:
       return
     
     self.qstate = QState(size)
+    self.parser.size = size
     self.reset()
 
   def reset(self):
@@ -83,10 +84,10 @@ class QAlgebra:
       operations = self.parser.run(expression)
       self.qstate = self.execution.run(self.qstate, operations)
       self.operations += operations
-      print('[#] Operations:', self.writer.get_operations_string(self.operations))
+      print('[#] Operations:', self.writer.get_operations_string(self.operations, self.qstate.size))
       print('[#] Current state:', self.qstate)
     except Exception as e:
-      print('[!] Not valid expression', e)
+      print('[!] Not valid expression -', e)
 
   def print_circuit(self):
     try:

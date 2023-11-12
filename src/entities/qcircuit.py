@@ -4,7 +4,7 @@ class QCircuit:
     self.WIRE = '―'
     self.CONTROL = '●'
 
-    self.operations = operations[::-1]
+    self.operations = operations
     self.size = size
     self.horizontal_wires_zone = []
     self.matrix = self.__get_matrix()
@@ -31,14 +31,14 @@ class QCircuit:
       horizontal_wires_zone = list(range(min(indexes), max(indexes))) if len(op.controls) > 0 else []
       self.horizontal_wires_zone.append(horizontal_wires_zone)
 
-    return matrix
+    return matrix[::-1]
 
   def __str__(self):
     qc_string = ''
     max_size = max(list(map(lambda i: len(i), self.matrix)))
 
     for i, qubit in enumerate(self.matrix):
-      qubit_string = 'q[' + str(i) + '] ' + self.WIRE
+      qubit_string = 'q[' + str(i + 1) + '] ' + self.WIRE
       next_horizontals_string = ' ' * len(qubit_string)
       for j, cell in enumerate(qubit):
         qubit_string += self.WIRE + cell + self.WIRE
