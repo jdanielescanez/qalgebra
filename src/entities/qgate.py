@@ -24,7 +24,7 @@ class QGate:
         string += f'{indexes[i]},{indexes[j]},'
         i = j
       elif i != j:
-        string += f'{indexes[i]}-{indexes[j]},'
+        string += f'{indexes[i]}:{indexes[j]},'
         i = j
       else:
         string += f'{indexes[i]},'

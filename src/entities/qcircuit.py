@@ -29,7 +29,7 @@ class QCircuit:
         matrix[control][max_qubit] = self.CONTROL
       
       horizontal_wires_zone = list(range(min(indexes), max(indexes))) if len(op.controls) > 0 else []
-      self.horizontal_wires_zone.append(horizontal_wires_zone)
+      self.horizontal_wires_zone.append(list(map(lambda x: self.size - x - 2, horizontal_wires_zone)))
 
     return matrix[::-1]
 
@@ -45,9 +45,11 @@ class QCircuit:
         horizontal_wire = '|' if i in self.horizontal_wires_zone[j] else ' '
         next_horizontals_string += ' ' + horizontal_wire + ' '
 
-      padding = 3 * (max_size - len(qubit)) * self.WIRE
-      next_horizontals_string += padding + '\n'
+      padding_size = 3 * (max_size - len(qubit))
+      padding_wire = padding_size * self.WIRE
+      padding_space = padding_size * ' '
+      next_horizontals_string += padding_space + '\n'
 
-      qc_string += qubit_string + padding + '\n' + next_horizontals_string
+      qc_string += qubit_string + padding_wire + '\n' + next_horizontals_string
 
     return qc_string[:-(len(next_horizontals_string) + 1)]

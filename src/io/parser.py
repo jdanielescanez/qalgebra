@@ -24,7 +24,6 @@ class Parser:
         first_target, last_target = split_string_by_char(targets, '-')
         targets = list(range(first_target, last_target + 1))
       else:
-        print(targets)
         targets = split_string_by_char(targets, ',')
 
       if len(controls) > 0:
