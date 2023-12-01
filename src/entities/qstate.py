@@ -1,7 +1,4 @@
 
-from sympy import re, im
-from sympy.printing.latex import latex
-
 class QState:
   def __init__(self, size: int) -> None:
     self.size = size
@@ -17,19 +14,16 @@ class QState:
     self.all_zero()
     self.state[0] = complex(1)
     
-  def __format_sqrt_i(self, coefficient):
-    return str(coefficient).replace('sqrt', '√').replace('*I', 'ⅈ')
-  
   def __is_complex(self, number):
-    return type(number) == complex or ('sympy' in str(type(number)) and im(number) != 0)
+    return type(number) == complex
 
   def __str__(self) -> str:
     string = ''
     for i, coefficient in enumerate(self.state):
       if coefficient != 0:
-        sign = '' if self.__is_complex(coefficient) else ('-' if coefficient < 0 else '+')
+        sign = '+' if self.__is_complex(coefficient) else ('-' if coefficient < 0 else '+')
         formated_coefficient = coefficient if self.__is_complex(coefficient) else abs(coefficient)
-        formated_coefficient = (' ' + self.__format_sqrt_i(formated_coefficient)) if formated_coefficient != 1 else ''
+        formated_coefficient = (' ' + str(formated_coefficient)) if formated_coefficient != 1 else ''
         
         string += sign + formated_coefficient + ' |' + self.tags[i] + '> '
     return string
