@@ -4,6 +4,7 @@ from src.entities.qcircuit import QCircuit
 from src.io.parser import Parser
 from src.io.writer import Writer
 from src.entities.execution import Execution
+from src.entities.converter import Converter
 from src.representation.circle_representation import paint_circle_notation
 
 class QAlgebra:
@@ -14,6 +15,7 @@ class QAlgebra:
     self.parser = Parser(0)
     self.writer = Writer()
     self.execution = Execution()
+    self.converter = Converter()
 
   def print_header(self):
     pass # TODO
@@ -37,6 +39,7 @@ class QAlgebra:
     print('[4] Print current circuit')
     print('[5] Plot circle notation')
     print('[6] Print latex workout')
+    print('[7] Print qiskit circuit code')
 
     print('[0] Exit\n')
 
@@ -49,6 +52,7 @@ class QAlgebra:
       4: self.print_circuit,
       5: self.plot_circle_notation,
       6: self.write_latex_workout,
+      7: self.print_qiskit_circuit,
     }
 
     try:
@@ -105,3 +109,6 @@ class QAlgebra:
     filename = input('[&] Write the file name: ')
     self.writer.run(self.operations, self.qstate.size, filename)
     print(f'[#] Check ./examples/output/{filename}.tex and ./examples/output/{filename}.pdf')
+
+  def print_qiskit_circuit(self):
+    print(self.converter.to_qiskit(QCircuit(self.operations, self.qstate.size)))

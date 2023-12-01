@@ -35,6 +35,8 @@ class Parser:
       else:
         controls = []
 
+      targets.sort()
+      controls.sort()
       gate = gates[gate_name](targets, controls)
       self.operations.append(gate)
 
