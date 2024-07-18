@@ -7,6 +7,7 @@ from src.entities.execution import Execution
 from src.entities.converter import Converter
 from src.representation.circle_representation import paint_circle_notation
 
+
 class QAlgebra:
   def __init__(self):
     self.qstate = None
@@ -40,6 +41,7 @@ class QAlgebra:
     print('[5] Plot circle notation')
     print('[6] Print latex workout')
     print('[7] Print qiskit circuit code')
+    print('[8] Optimize circuit (Work in progress...)')
 
     print('[0] Exit\n')
 
@@ -53,6 +55,7 @@ class QAlgebra:
       5: self.plot_circle_notation,
       6: self.write_latex_workout,
       7: self.print_qiskit_circuit,
+      8: self.optimize_circuit,
     }
 
     try:
@@ -112,3 +115,6 @@ class QAlgebra:
 
   def print_qiskit_circuit(self):
     print(self.converter.to_qiskit(QCircuit(self.operations, self.qstate.size)))
+
+  def optimize_circuit(self):
+    print('Optimizing...')
