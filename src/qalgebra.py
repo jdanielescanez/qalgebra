@@ -6,6 +6,7 @@ from src.io.writer import Writer
 from src.entities.execution import Execution
 from src.entities.converter import Converter
 from src.representation.circle_representation import paint_circle_notation
+from src.io.rule_parser import RuleParser
 
 
 class QAlgebra:
@@ -28,10 +29,13 @@ class QAlgebra:
 
   def run(self):
     self.print_header()
-    while True:
-      self.print_title()
-      self.print_menu()
-      self.run_option()
+    try:
+      while True:
+        self.print_title()
+        self.print_menu()
+        self.run_option()
+    except KeyboardInterrupt:
+        print("\n[!] Interrupted by user. Exiting the program.")  
 
   def print_menu(self):
     print('[1] Set size')
@@ -117,4 +121,8 @@ class QAlgebra:
     print(self.converter.to_qiskit(QCircuit(self.operations, self.qstate.size)))
 
   def optimize_circuit(self):
+    filename = input('[&] Write the rules file name: ')
+    print('Reading file...')
+    RuleParser(filename)
     print('Optimizing...')
+    

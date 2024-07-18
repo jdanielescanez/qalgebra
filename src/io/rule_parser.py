@@ -3,7 +3,7 @@ from entities.rule import Rule
 import re
 
 class RuleParser:
-    def _init_(self, filename: str):
+    def __init__(self, filename: str) -> None: 
         self.rule_list = self.read_file_to_list(filename)
 
     def parse_rule(self, rule: str) -> Rule:
