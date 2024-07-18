@@ -7,6 +7,7 @@ from src.entities.execution import Execution
 from src.entities.converter import Converter
 from src.representation.circle_representation import paint_circle_notation
 from src.io.rule_parser import RuleParser
+from src.optimizer.optimizer import RuleApplier
 
 
 class QAlgebra:
