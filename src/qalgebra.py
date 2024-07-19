@@ -126,4 +126,3 @@ class QAlgebra:
     print('Reading file...')
     RuleParser(filename)
     print('Optimizing...')
-    

@@ -1,5 +1,6 @@
 
-from entities.rule import Rule
+from src.entities.rule import Rule
+from src.entities.rule_gate import RuleGate
 import re
 
 class RuleParser:
@@ -7,45 +8,22 @@ class RuleParser:
         self.rule_list = self.read_file_to_list(filename)
 
     def parse_rule(self, rule: str) -> Rule:
-        pattern = re.compile(r"(\w+)_\{(\w+)\}\^\{(\w+)\}")
-        parts = rule.split(' = ')
-        left_part = parts[0].strip()
-        right_part = parts[1].strip()
+        pattern = re.compile(r'(?P<gate_name>[A-Z]+)(?:(?:\_\{(?P<targets>\\?[a-z]+(?::\\?[a-z]+)?(?:,\\?[a-z]+)*)\})|(?:\^\{(?P<controls>\\?[a-z]+(?::\\?[a-z]+)?(?:,\\?[a-z]+)*)\}))+')
+        parts = rule.split('=')
+        left_part, right_part = list(map(lambda elem: elem.strip(), parts))
 
         left_matches = pattern.findall(left_part)
-        right_match = pattern.match(right_part)
+        right_matches = pattern.findall(right_part)
 
-        if not right_match:
+        if not right_matches:
             raise ValueError(f"Invalid rule format: {rule}")
 
-        result_name, result_sub, result_super = right_match.groups()
-
-        patron = [(name, sub, super) for name, sub, super in left_matches]
-        resultado = (result_name, result_sub, result_super)
+        left, right = list(map(lambda x: [RuleGate(name, sub, super) for name, sub, super in x], [left_matches, right_matches]))
         
-        return Rule(patron, resultado)
+        return Rule(left, right)
 
     def get_rule_list(self):
         return self.rule_list
-    
-    def parse_rule(self, rule: str) -> Rule:
-        pattern = re.compile(r"(\w+)_\{(\w+)\}\^\{(\w+)\}")
-        parts = rule.split(' = ')
-        left_part = parts[0].strip()
-        right_part = parts[1].strip()
-
-        left_matches = pattern.findall(left_part)
-        right_match = pattern.match(right_part)
-
-        if not right_match:
-            raise ValueError(f"Invalid rule format: {rule}")
-
-        result_name, result_sub, result_super = right_match.groups()
-
-        patron = [(name, sub, super) for name, sub, super in left_matches]
-        resultado = (result_name, result_sub, result_super)
-        
-        return Rule(patron, resultado)
     
     def read_file_to_list(self, filename):
         """

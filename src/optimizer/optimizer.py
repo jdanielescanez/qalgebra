@@ -1,51 +1,52 @@
 import re
 from typing import List
-from src.entities import QGate, Rule
+from src.entities.rule_gate import RuleGate
+from src.entities.rule import Rule
 
 class RuleApplier:
     def __init__(self, rules: List[Rule]):
         self.rules = rules
 
-    def apply_rule(self, expression: List[QGate], rule: Rule) -> List[QGate]:
+    def apply_rule(self, expression: List[RuleGate], rule: Rule) -> List[RuleGate]:
         new_expression = []
         i = 0
         while i < len(expression):
             match_found = False
-            if i <= len(expression) - len(rule.patron):
+            if i <= len(expression) - len(rule.left):
                 match = True
-                subindices = None
-                superindices = {}
-                for j, (nombre, sub, super) in enumerate(rule.patron):
+                targets = None
+                controls = {}
+                for j, gate_left in enumerate(rule.left):
                     gate = expression[i + j]
-                    if gate.nombre != nombre:
+                    if gate.__class__.__name__ != gate_left.tag:
                         match = False
                         break
-                    if subindices is None:
-                        subindices = gate.subindices
-                    elif subindices != gate.subindices:
+                    if targets is None:
+                        targets = gate.targets
+                    elif targets != gate.targets:
                         match = False
                         break
-                    if super not in superindices:
-                        superindices[super] = gate.superindices
+                    if super not in controls:
+                        controls[super] = gate.controls
                     else:
-                        if superindices[super] != gate.superindices:
+                        if controls[super] != gate.controls:
                             match = False
                             break
                 if match:
-                    result_subindices = subindices
-                    result_superindices = set()
+                    result_targets = targets
+                    result_controls = set()
                     for key in rule.resultado[2].split('+'):
-                        result_superindices.update(superindices[key])
-                    new_gate = QGate(rule.resultado[0], result_subindices, result_superindices)
+                        result_controls.update(controls[key])
+                    new_gate = RuleGate(rule.resultado[0], result_targets, result_controls)
                     new_expression.append(new_gate)
-                    i += len(rule.patron)
+                    i += len(rule.left)
                     match_found = True
             if not match_found:
                 new_expression.append(expression[i])
                 i += 1
         return new_expression
 
-    def apply_rules(self, expression: List[QGate]) -> List[QGate]:
+    def apply_rules(self, expression: List[RuleGate]) -> List[RuleGate]:
         while True:
             new_expression = expression
             for rule in self.rules:  # Apply all rules

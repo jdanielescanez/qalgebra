@@ -30,7 +30,7 @@ class QGate:
         string += f'{indexes[i]},'
       i += 1
       j = i
-    return string[:-1]
+    return string[:-1][::-1]
 
   def get_formatted_string(self, size) -> str:
     formated_targets = self.format_indexes(self.targets, size)
