@@ -17,6 +17,7 @@ class RuleApplier:
                 if pre_index != indexes[i]:
                     for j in range(i, len(indexes)):
                         indexes[j] = indexes[j - 1] + 1
+                # TODO: Check if there is some ilegal index inside the indexes window
             except ValueError:
                 return None
         return indexes
