@@ -2,6 +2,7 @@ import re
 from typing import List
 from src.entities.rule_gate import RuleGate
 from src.entities.rule import Rule
+from functools import reduce
 
 class RuleApplier:
     def __init__(self, rules: List[Rule]):
@@ -13,14 +14,11 @@ class RuleApplier:
             try:
                 pre_index = indexes[i]
                 indexes[i] = expression_names.index(left[i].name, pre_index)
-                print(indexes[i], i)
                 if pre_index != indexes[i]:
                     for j in range(i, len(indexes)):
-                        print(i, j, indexes)
                         indexes[j] = indexes[j - 1] + 1
             except ValueError:
                 return None
-        print(indexes)
         return indexes
 
     def apply_rule(self, expression: List[RuleGate], rule: Rule) -> List[RuleGate]:
@@ -33,14 +31,34 @@ class RuleApplier:
             if indexes == None:
                 return new_expression
             
+            set_names = reduce(lambda x, y: x.union(y), [set(x.targets).union(set(x.controls)) for x in left])
+            dic_names = {k: [] for k in set_names}
+            aux_expression = list(map(new_expression.__getitem__, indexes))
+            for name in set_names:
+                for rule_gate, gate in zip(left, aux_expression):
+                    if name in rule_gate.targets:
+                        dic_names[name].append(gate.targets)
+                    if name in rule_gate.controls:
+                        dic_names[name].append(gate.controls)
+            dic_names = {k: set(reduce(lambda x, y: set(x).intersection(set(y)), dic_names[k])) for k in set_names}
+
+            if all([len(dic_names[k]) > 0 for k in set_names]):
+                for i in indexes[::-1]:
+                    del new_expression[i]
+
+                origin = indexes[0]
+                right = rule.right
+
+                for i, rule_gate in enumerate(right):
+                    new_expression.insert(origin + i, rule_gate.get_gate_by_dic(dic_names))
 
             indexes[-1] += 1
             for j in range(len(indexes)):
-                if indexes[len(indexes) - j - 1] == len(expression) - j:
-                    indexes[len(indexes) - j - 1] -= len(expression) - j
-                    print(j)
-                    if j != len(indexes) - 1:
-                        indexes[len(indexes) - j - 2] += 1
+                real_index = len(indexes) - j - 1
+                if indexes[real_index] == len(expression) - j:
+                    indexes[real_index] -= len(expression) - j
+                    if real_index != 0:
+                        indexes[real_index - 1] += 1
                     else:
                         return new_expression
 
