@@ -7,51 +7,49 @@ class RuleApplier:
     def __init__(self, rules: List[Rule]):
         self.rules = rules
 
+    def get_indexes_to_apply(self, expression: List[RuleGate], left: List[RuleGate], indexes: List[int]):
+        for i in range(len(left)):
+            expression_names = list(map(lambda x: x.name, expression))
+            try:
+                pre_index = indexes[i]
+                indexes[i] = expression_names.index(left[i].name, pre_index)
+                print(indexes[i], i)
+                if pre_index != indexes[i]:
+                    for j in range(i, len(indexes)):
+                        print(i, j, indexes)
+                        indexes[j] = indexes[j - 1] + 1
+            except ValueError:
+                return None
+        print(indexes)
+        return indexes
+
     def apply_rule(self, expression: List[RuleGate], rule: Rule) -> List[RuleGate]:
-        new_expression = []
-        i = 0
-        while i < len(expression):
-            match_found = False
-            if i <= len(expression) - len(rule.left):
-                match = True
-                targets = None
-                controls = {}
-                for j, gate_left in enumerate(rule.left):
-                    gate = expression[i + j]
-                    if gate.__class__.__name__ != gate_left.tag:
-                        match = False
-                        break
-                    if targets is None:
-                        targets = gate.targets
-                    elif targets != gate.targets:
-                        match = False
-                        break
-                    if super not in controls:
-                        controls[super] = gate.controls
+        new_expression = expression.copy()
+
+        left = rule.left
+        indexes = [0] * len(left)
+        while True:
+            indexes = self.get_indexes_to_apply(expression, left, indexes)
+            if indexes == None:
+                return new_expression
+            
+
+            indexes[-1] += 1
+            for j in range(len(indexes)):
+                if indexes[len(indexes) - j - 1] == len(expression) - j:
+                    indexes[len(indexes) - j - 1] -= len(expression) - j
+                    print(j)
+                    if j != len(indexes) - 1:
+                        indexes[len(indexes) - j - 2] += 1
                     else:
-                        if controls[super] != gate.controls:
-                            match = False
-                            break
-                if match:
-                    result_targets = targets
-                    result_controls = set()
-                    for key in rule.resultado[2].split('+'):
-                        result_controls.update(controls[key])
-                    new_gate = RuleGate(rule.resultado[0], result_targets, result_controls)
-                    new_expression.append(new_gate)
-                    i += len(rule.left)
-                    match_found = True
-            if not match_found:
-                new_expression.append(expression[i])
-                i += 1
-        return new_expression
+                        return new_expression
 
     def apply_rules(self, expression: List[RuleGate]) -> List[RuleGate]:
+        new_expression = expression.copy()
         while True:
-            new_expression = expression
-            for rule in self.rules:  # Apply all rules
+            for rule in self.rules: # Apply all rules
                 new_expression = self.apply_rule(new_expression, rule)
-            if new_expression == expression:  # No rule was applied, we are done
+            if new_expression == expression: # No rule was applied, we are done
                 break
-            expression = new_expression
-        return expression
+            expression = new_expression.copy()
+        return new_expression

@@ -7,6 +7,7 @@ class QGate:
     self.matrix = matrix
     self.targets = targets
     self.controls = controls
+    self.name = self.__class__.__name__
     
     # TODO: Add symbol
     # chr(127215 + ord('A')) = chr(127280) = 🄰

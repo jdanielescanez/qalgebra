@@ -31,11 +31,11 @@ def format_results(results):
   formatted_results = []
   for i, result in enumerate(results):
     formatted_results.append([])
-    tag, targets, controls = result
+    name, targets, controls = result
     targets = targets.split(',')
     controls = controls.split(',') if controls != '' else []
 
-    formatted_results[i].append(tag)
+    formatted_results[i].append(name)
     formatted_results[i].append(list(map(get_re, targets)))
     formatted_results[i].append(list(map(get_re, controls)))
   

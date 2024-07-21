@@ -1,7 +1,7 @@
 
 class RuleGate():
-  def __init__(self, tag: str, targets: list, controls: list=[]) -> None:
-    self.tag = tag
+  def __init__(self, name: str, targets: list, controls: list=[]) -> None:
+    self.name = name
     self.targets = targets.split(',')
     self.controls = controls
     if self.controls:
@@ -10,4 +10,4 @@ class RuleGate():
       self.controls = []
 
   def __repr__(self):
-    return f"{self.tag}_{{{','.join(self.targets)}}}" + (f"^{{{','.join(self.controls)}}}" if self.controls else '')
+    return f"{self.name}_{{{','.join(self.targets)}}}" + (f"^{{{','.join(self.controls)}}}" if self.controls else '')
