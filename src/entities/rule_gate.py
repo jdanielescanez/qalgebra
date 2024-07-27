@@ -17,7 +17,7 @@ class RuleGate():
     targets = set(reduce(lambda x, y: set(x).union(set(y)), targets_list))
 
     controls_list = [parameters[t_param] for t_param in self.controls]
-    controls = set(reduce(lambda x, y: set(x).union(set(y)), controls_list))
+    controls = [] if len(controls_list) == 0 else set(reduce(lambda x, y: set(x).union(set(y)), controls_list))
 
     return gates[self.name](targets, controls)
 

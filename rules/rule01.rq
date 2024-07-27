@@ -2,3 +2,5 @@
 #
 
 H_{\omega,k}X_{k}^{\omega}H_{\omega,k}=X_{\omega}^{k}
+# X_{l}^{h,\omega}X_{h}X_{l}^{h,\omega}=X_{l}^{\omega}X_{h}
+# X_{\omega}X_{\omega}=I_{\omega}

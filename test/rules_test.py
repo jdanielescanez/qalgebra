@@ -21,7 +21,7 @@ from src.qalgebra import QAlgebra
 
 qalgebra = QAlgebra()
 size = 2
-expression = 'H_{1,2}X_{2}^{1}H_{1,2}'
+expression = 'X_{3}X_{4}^{1,2,3}X_{2}X_{4}^{1,2,3}X_{1,2}X_{4}^{1,2,3}X_{2}X_{4}^{1,2,3}X_{1,2,3}'
 
 qalgebra.qstate = QState(size)
 qalgebra.parser.size = size
