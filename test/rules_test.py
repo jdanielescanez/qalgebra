@@ -2,6 +2,12 @@
 import sys, readline
 sys.path.append('.')
 
+### Para linux
+import matplotlib
+matplotlib.use('Agg')  
+import matplotlib.pyplot as plt
+###
+
 
 from src.entities.qstate import QState
 from src.representation.circle_representation import paint_circle_notation
@@ -9,11 +15,7 @@ from src.io.rule_parser import RuleParser
 from src.optimizer.optimizer import RuleApplier
 
 
-### Para linux
-import matplotlib
-matplotlib.use('TkAgg')  
-import matplotlib.pyplot as plt
-###
+
 
 #mpl.rcParams.update(mpl.rcParamsDefault)
 
