@@ -11,38 +11,54 @@ class RuleApplier:
 
     def get_indexes_to_apply(self, expression: List[RuleGate], left: List[RuleGate], indexes: List[int]):
         new_indexes = indexes.copy()
+        print(new_indexes)
         for i in range(len(left)):
             expression_names = list(map(lambda x: x.name, expression))
             try:
-                pre_index = new_indexes[i]
-                new_indexes[i] = expression_names.index(left[i].name, pre_index)
-                if pre_index != new_indexes[i]:
+                new_indexes[i] = expression_names.index(left[i].name, new_indexes[i])
+                if new_indexes != list(set(new_indexes)):
                     for j in range(i + 1, len(new_indexes)):
                         new_indexes[j] = new_indexes[j - 1] + 1
-                # TODO: Check if there is some ilegal index inside the indexes window
+                
             except ValueError:
                 return None
+        print('-', new_indexes)
+        main_window = expression[new_indexes[0]:new_indexes[-1]+1]
+        relative_indexes = [index - new_indexes[0] for index in new_indexes]
+        rest = main_window.copy()
+        for relative_index in relative_indexes[::-1]:
+            del rest[relative_index]
+        aux_expression = list(map(expression.__getitem__, new_indexes))
+        set_values_aux = reduce(lambda x, y: x.union(y), [set(gate.targets).union(set(gate.controls)) for gate in aux_expression])
+        set_values_rest = reduce(lambda x, y: x.union(y), [set(gate.targets).union(set(gate.controls)) for gate in aux_expression])
+
+        is_ilegal_window = any([rest_i in set_values_aux for rest_i in set_values_rest])
+        if is_ilegal_window:
+            new_indexes = self.next_indexes(new_indexes, expression)
+            if new_indexes == None:
+                return None
+            return self.get_indexes_to_apply(expression, left, new_indexes)
         return new_indexes
 
-    def next_indexes(self, indexes, new_expression):
+    def next_indexes(self, indexes, expression):
         new_indexes = indexes.copy()
         new_indexes[-1] += 1
         for j in range(len(new_indexes)):
             real_index = len(new_indexes) - j - 1
-            if new_indexes[real_index] == len(new_expression) - j:
-                new_indexes[real_index] -= len(new_expression) - j
+            if new_indexes[real_index] == len(expression) - j:
+                new_indexes[real_index] -= len(expression) - j
                 if real_index != 0:
                     new_indexes[real_index - 1] += 1
+                    new_indexes[real_index] = new_indexes[real_index - 1] + 1
                 else:
                     return None
-        
         return new_indexes
 
     def apply_rule(self, expression: List[QGate], rule: Rule) -> List[QGate]:
         new_expression = expression.copy()
 
         left = rule.left
-        indexes = [0] * len(left)
+        indexes = list(range(len(left)))
         while True:
             indexes = self.get_indexes_to_apply(new_expression, left, indexes)
             if indexes == None:
@@ -61,12 +77,23 @@ class RuleApplier:
             for name in set_names:
                 for rule_gate, gate in zip(left, aux_expression):
                     if name in rule_gate.targets:
-                        dic_names[name].append(gate.targets)
+                        dic_names[name].append(gate.targets) # TODO: Change to add
                     if name in rule_gate.controls:
                         dic_names[name].append(gate.controls)
             dic_names = {k: set(reduce(lambda x, y: set(x).intersection(set(y)), dic_names[k])) for k in set_names}
 
             if all([len(dic_names[k]) > 0 for k in set_names]):
+                # main_window = expression[indexes[0]:indexes[-1]]
+                # set_values = reduce(lambda x, y: x.union(y), [set(gate.targets).union(set(gate.controls)) for gate in main_window])
+                # sub_windows = {name: [indexes[0] + main_window.index(indexes, ), ] for name in set_names}
+        
+                # is_ilegal_window = True
+                # if is_ilegal_window:
+                #     indexes = self.next_indexes(indexes, new_expression)
+                #     if indexes == None:
+                #         return new_expression
+                #     break
+        
                 for i in indexes[::-1]:
                     del new_expression[i]
 
