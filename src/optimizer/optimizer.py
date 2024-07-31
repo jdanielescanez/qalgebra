@@ -1,4 +1,4 @@
-import re
+
 from typing import List
 from src.entities.qgate import QGate
 from src.entities.rule_gate import RuleGate
@@ -11,26 +11,28 @@ class RuleApplier:
 
     def get_indexes_to_apply(self, expression: List[RuleGate], left: List[RuleGate], indexes: List[int]):
         new_indexes = indexes.copy()
-        print(new_indexes)
         for i in range(len(left)):
             expression_names = list(map(lambda x: x.name, expression))
             try:
                 new_indexes[i] = expression_names.index(left[i].name, new_indexes[i])
-                if new_indexes != list(set(new_indexes)):
+                if new_indexes != sorted(list(set(new_indexes))):
                     for j in range(i + 1, len(new_indexes)):
                         new_indexes[j] = new_indexes[j - 1] + 1
                 
             except ValueError:
-                return None
-        print('-', new_indexes)
+                new_indexes = self.next_indexes(new_indexes, expression)
+                if new_indexes == None:
+                    return None
+                return self.get_indexes_to_apply(expression, left, new_indexes)
+            
         main_window = expression[new_indexes[0]:new_indexes[-1]+1]
         relative_indexes = [index - new_indexes[0] for index in new_indexes]
         rest = main_window.copy()
         for relative_index in relative_indexes[::-1]:
             del rest[relative_index]
-        aux_expression = list(map(expression.__getitem__, new_indexes))
-        set_values_aux = reduce(lambda x, y: x.union(y), [set(gate.targets).union(set(gate.controls)) for gate in aux_expression])
-        set_values_rest = reduce(lambda x, y: x.union(y), [set(gate.targets).union(set(gate.controls)) for gate in aux_expression])
+        
+        set_values_aux = reduce(lambda x, y: x.union(y), [set(gate.targets).union(set(gate.controls)) for gate in main_window])
+        set_values_rest = {} if len(rest) == 0 else reduce(lambda x, y: x.union(y), [set(gate.targets).union(set(gate.controls)) for gate in rest])
 
         is_ilegal_window = any([rest_i in set_values_aux for rest_i in set_values_rest])
         if is_ilegal_window:
@@ -45,11 +47,11 @@ class RuleApplier:
         new_indexes[-1] += 1
         for j in range(len(new_indexes)):
             real_index = len(new_indexes) - j - 1
-            if new_indexes[real_index] == len(expression) - j:
+            if new_indexes[real_index] >= len(expression) - j:
                 new_indexes[real_index] -= len(expression) - j
                 if real_index != 0:
                     new_indexes[real_index - 1] += 1
-                    new_indexes[real_index] = new_indexes[real_index - 1] + 1
+                    new_indexes[real_index:] = list(range(new_indexes[real_index - 1] + 1, len(new_indexes[real_index:]) + new_indexes[real_index - 1] + 1))
                 else:
                     return None
         return new_indexes
@@ -67,12 +69,16 @@ class RuleApplier:
             set_names = reduce(lambda x, y: x.union(y), [set(x.targets).union(set(x.controls)) for x in left])
             dic_names = {k: [] for k in set_names}
             aux_expression = list(map(new_expression.__getitem__, indexes))
+            continues = False
             for i, gate in enumerate(aux_expression):
-                if len(left[i].controls) == 0 and len(gate.controls) != 0:
+                if len(left[i].controls) != 0 and len(gate.controls) == 0:
                     indexes = self.next_indexes(indexes, new_expression)
                     if indexes == None:
                         return new_expression
-                    break; continue
+                    continues = True
+                    break
+            if continues:
+                continue
 
             for name in set_names:
                 for rule_gate, gate in zip(left, aux_expression):
@@ -94,6 +100,7 @@ class RuleApplier:
                 #         return new_expression
                 #     break
         
+                print(rule, dic_names)
                 for i in indexes[::-1]:
                     del new_expression[i]
 
