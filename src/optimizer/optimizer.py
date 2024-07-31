@@ -87,6 +87,18 @@ class RuleApplier:
                     if name in rule_gate.controls:
                         dic_names[name].append(gate.controls)
             dic_names = {k: set(reduce(lambda x, y: set(x).intersection(set(y)), dic_names[k])) for k in set_names}
+            
+            for k1 in dic_names.keys():
+                if len(dic_names[k1]) == 1 and k1[0] != "\\":
+                    for k2 in dic_names.keys():
+                        if k1 != k2:
+                            dic_names[k2] -= dic_names[k1]
+            
+            for k1 in dic_names.keys():
+                if len(dic_names[k1]) > 1:
+                    for k2 in dic_names.keys():
+                        if k1 != k2:
+                            dic_names[k1] -= dic_names[k2]
 
             if all([len(dic_names[k]) > 0 for k in set_names]):
                 # main_window = expression[indexes[0]:indexes[-1]]
@@ -100,7 +112,6 @@ class RuleApplier:
                 #         return new_expression
                 #     break
         
-                print(rule, dic_names)
                 for i in indexes[::-1]:
                     del new_expression[i]
 
