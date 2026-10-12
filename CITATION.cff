@@ -1,0 +1,43 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Escanez-Exposito"
+  given-names: "Daniel"
+  orcid: "https://orcid.org/0000-0003-4215-0501"
+- family-names: "Rodriguez-Vega"
+  given-names: "Marcos"
+  orcid: "https://orcid.org/0009-0004-2379-842X"
+title: "QAlgebra"
+abstract: "QAlgebra is a Python library for quantum circuit simulation and manipulation based on an algebraic language for representing and optimizing quantum circuits."
+license: MIT
+url: "https://github.com/jdanielescanez/qalgebra"
+repository-code: "https://github.com/jdanielescanez/qalgebra"
+preferred-citation:
+  type: article
+  authors:
+  - family-names: "Escanez-Exposito"
+    given-names: "Daniel"
+    orcid: "https://orcid.org/0000-0003-4215-0501"
+  - family-names: "Caballero-Gil"
+    given-names: "Pino"
+    orcid: "https://orcid.org/0000-0002-0859-5876"
+  - family-names: "Rodriguez-Vega"
+    given-names: "Marcos"
+    orcid: "https://orcid.org/0009-0004-2379-842X"
+  - family-names: "Costa-Cano"
+    given-names: "Francisco"
+    orcid: "https://orcid.org/0000-0002-7669-8930"
+  - family-names: "Sáenz-de-Cabezón"
+    given-names: "Eduardo"
+    orcid: "https://orcid.org/0000-0002-5615-4194"
+  doi: "10.1088/1402-4896/ad9fb6"
+  journal: "Physica Scripta"
+  publisher:
+    name: "IOP Publishing"
+  issn: "1402-4896"
+  month: 2
+  start: "025107"
+  title: "Algebraic language for the efficient representation and optimization of quantum circuits"
+  issue: 2
+  volume: 100
+  year: 2025
