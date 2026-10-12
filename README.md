@@ -31,3 +31,11 @@ pip install pdflatex
 pip install numpy
 pip install matplotlib
 ```
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+## Contributing
+
+Contributions are welcome! Please open an issue or submit a pull request on [GitHub](https://github.com/jdanielescanez/qalgebra).
